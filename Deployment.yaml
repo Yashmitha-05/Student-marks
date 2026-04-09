@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: student-results-container
-        image: yashmitha05/html-demo:latest # Ensure this matches your Build stage tag
+        image: yashmitha05/html-demo:latest 
         ports:
         - containerPort: 80
 ---
@@ -28,5 +28,5 @@ spec:
     app: student-results
   ports:
     - port: 80
-      targetPort: 80 # Changed from 89 to 80 to match Nginx
+      targetPort: 80 
       nodePort: 30007 
