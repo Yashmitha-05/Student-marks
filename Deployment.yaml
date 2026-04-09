@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: student-results-container
-        image: <your-docker-id>/student-results-app:latest
+        image: yashmitha05/student-results-app:latest
         ports:
         - containerPort: 80
 ---
