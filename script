@@ -1,0 +1,125 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "yashmitha05/html-demo:latest"
+        DOCKER_HUB_CREDENTIALS = "docker-credentials-id"
+        KUBECONFIG_CREDENTIALS = "kubeconfig-id"
+    }
+
+    stages {
+
+        stage('Clone Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Yashmitha-05/Student-marks.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $DOCKER_IMAGE .'
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKER_HUB_CREDENTIALS}",
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push $DOCKER_IMAGE'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBECONFIG')]) {
+                    sh 'kubectl apply -f deployment.yaml'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment Successful 🚀'
+        }
+        failure {
+            echo 'Something went wrong ❌'
+        }
+    }
+}
+
+
+
+linux
+
+
+windows
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "yashmitha05/html-demo:latest"
+        DOCKER_HUB_CREDENTIALS = "docker-credentials-id"
+        KUBECONFIG_CREDENTIALS = "kubeconfig-id"
+    }
+
+    stages {
+
+        stage('Clone Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Yashmitha-05/Student-marks.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t %DOCKER_IMAGE% .'
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKER_HUB_CREDENTIALS}",
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                bat 'docker push %DOCKER_IMAGE%'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([file(credentialsId: "${KUBECONFIG_CREDENTIALS}", variable: 'KUBECONFIG')]) {
+                    bat 'kubectl apply -f deployment.yaml'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment Successful 🚀'
+        }
+        failure {
+            echo 'Something went wrong ❌'
+        }
+    }
+}
